@@ -47,25 +47,40 @@ const Login = () => {
   const [errores,setErrores]= useState([{error: "email", estado:null , texto:""},{error: "contraseña", estado:null , texto:""}])
   const [correo,setCorreo] = useState('');
 
+
+  
   const validacion = (value)=>{
     setCorreo(value)
-    if(value==="hola"){
-      console.log("entro")
-      const datos=errores.map(item=> (
+    const emailRegex =/^[^@]+@spb.gba.gov.ar\b(?!\s)/
+    if(!emailRegex.test(value)){
+      const datos =errores.map(item=> (
         item.error==="email" ?{
-          ...item,estado:true}:item
+          ...item,estado:true,texto:"@spb.gba.gov.ar"}:item
       ))
       setErrores(datos)
+          console.log("entro")
       //setErrores({...errores,email:true})
     }
-    const s =errores.filter(item => item.error==="email")
-
-    console.log(s)
+    else {
+      const datos =errores.map(item=> (
+        item.error==="email" ?{
+          ...item,estado:false,texto:""}:item
+      ))
+      console.log("entro salio")
+      setErrores(datos)
+    }
+    
     
   }
 
-
-
+  const estadoError=(constatar)=>{
+    const error = errores.filter(item => item.error===constatar).map(item=>{return item.estado})
+    return  Object.values(error)[0]
+  }
+  const textoError=(constatar)=>{
+    const error = errores.filter(item => item.error===constatar).map(item=>{return item.texto})
+    return  Object.values(error)[0]
+  }
 
 
 
@@ -93,7 +108,8 @@ const Login = () => {
             autoFocus
             value={correo}
             onChange={(e)=>validacion(e.target.value)}
-            error={false}
+            error={estadoError("email")}
+            helperText={textoError("email")}
           />
           <TextField
             variant="outlined"
@@ -130,7 +146,7 @@ const Login = () => {
           </Grid>
         </form>
       </div>
-        
+
     </Container>
     <div className={classes.footer} >
         <Typography variant="overline" align="center" noWrap gutterBottom>
