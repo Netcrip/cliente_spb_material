@@ -4,14 +4,15 @@ import {ThemeProvider} from '@material-ui/core/styles'
 
 
 import theme from './assets/css/themaConfig'
-import Login from './pages/Login'
+
+import Singin from './pages/Singin'
 
 
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-    <Login></Login>
+    <Singin/>
     </ThemeProvider>    
   );
 }

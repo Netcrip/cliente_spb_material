@@ -48,7 +48,7 @@ const Login = () => {
   const [correo,setCorreo] = useState('');
 
 
-  
+
   const validacion = (value)=>{
     setCorreo(value)
     const emailRegex =/^[^@]+@spb.gba.gov.ar\b(?!\s)/
@@ -66,10 +66,8 @@ const Login = () => {
         item.error==="email" ?{
           ...item,estado:false,texto:""}:item
       ))
-      console.log("entro salio")
       setErrores(datos)
     }
-    
     
   }
 
@@ -82,7 +80,10 @@ const Login = () => {
     return  Object.values(error)[0]
   }
 
-
+  const login =(e)=>{
+    e.preventDefault()
+    console.log("datos")
+  }
 
   return (
     <div>
@@ -95,7 +96,7 @@ const Login = () => {
         <Typography component="h1" variant="h5">
           Inicio de Sesion
         </Typography>
-        <form className={classes.form} noValidate>
+        <form className={classes.form} noValidate onSubmit={login}>
           <TextField
             variant="outlined"
             margin="normal"
@@ -130,7 +131,7 @@ const Login = () => {
             color="secondary"
             className={classes.submit}
           >
-            Sign In
+            Iniciar Sesion
           </Button>
           <Grid container>
             <Grid item xs>
