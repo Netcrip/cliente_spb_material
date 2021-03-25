@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -9,6 +9,10 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
+import md5 from 'md5'
+import { useFormik } from 'formik'
+import * as yup from 'yup'
+
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -42,52 +46,47 @@ const useStyles = makeStyles((theme) => ({
 
 const Singin = () => {
   const classes = useStyles();
-  const [datos, setDatos] = useState({
-    email: {
-      valor: "",
-      error: false,
-      helperText: "",
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      repeatEmail:"",
+      legajo:"",
+      password: "",
+      repeatPassword:"",
+
     },
-    emailValidacion: {
-        valor:"",
-        error: false,
-        helperText: "",
-      },
-    password: {
-        valor: "",
-        error: false,
-       helperText: "",
-      },
-      passwordValidacion: {
-        valor: "",
-        error: false,
-        helperText: "",
-      },
+    validationSchema: yup.object({
+      email: yup
+        .string('')
+        .matches(/^[a-z]+\.+[a-z]+[^@]+@spb.gba.gov.ar\b(?!\s)/,'Ingrese un correo @spb.gba.gov.ar')
+        .required('El email es requerido')
+        .oneOf([yup.ref("repeatEmail")],"Los email no coinciden"),
+        repeatEmail: yup
+        .string('')
+        .matches(/^[a-z]+\.+[a-z]+[^@]+@spb.gba.gov.ar\b(?!\s)/,'Ingrese un correo @spb.gba.gov.ar')
+        .required('El email es requerido')
+        .oneOf([yup.ref("email")]," "),
+        legajo: yup
+        .number().required().positive('No se permite el ingreso de " - "').integer('El legajo debe ingresarse sin "." ')
+        .required('El email es requerido'),
+        password: yup
+        .string('')
+        .min(8, 'La contraseña debe tener un mínimo de 8 caracteres.')
+        .required('La contraseña es requerida')
+        .oneOf([yup.ref("repeatPassword")],"Las contraseñas no coinciden"),
+        repeatPassword: yup
+        .string('')
+        .min(8, 'La contraseña debe tener un mínimo de 8 caracteres.')
+        .required('La contraseña es requerida')
+        .oneOf([yup.ref("password")]," "),
+    }),
+    onSubmit: (values) => {
+      console.log(md5(values.password))
+    },
   });
-
-  const validacionEmail = (value) => {
-    const emailRegex = /^[^@]+@spb.gba.gov.ar\b(?!\s)/;
-    if (!emailRegex.test(value.value)) {       
-            setDatos({...datos, [value.id]:{...datos[value.id],valor:value.value,error:true,helperText:"@spb.gba.gov.ar"}});
-
-    } else {
-        setDatos({...datos, [value.id]:{...datos[value.id],valor:value.value,error:false,helperText:""}});
-    }
-  };
-  const validacionRepetir=(value)=>{
-        if(datos.email.valor!==value.value && datos[value.id].error===false){
-            setDatos({...datos, [value.id]:{...datos[value.id],valor:value.value,error:true,helperText:"Los datos ingresados no coinciden"}});
-        }
-        else if(datos[value.id].error===false) 
-            setDatos({...datos, [value.id]:{...datos[value.id],valor:value.value,error:false,helperText:""}});
-       
-  }
-
-  const login = (e) => {
-    e.preventDefault();
-
-  };
-
+  
+  
   return (
     <div>
       <div>
@@ -100,7 +99,7 @@ const Singin = () => {
             <Typography component="h1" variant="h5">
               Inicio de Sesion
             </Typography>
-            <form className={classes.form} noValidate onSubmit={login}>
+            <form className={classes.form} noValidate onSubmit={formik.handleSubmit}>
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -109,28 +108,27 @@ const Singin = () => {
                 id="email"
                 label="Correo electronico"
                 name="email"
+                placeholder='e.jemplo@spb.gba.gov.ar'
                 autoComplete="email"
                 autoFocus
-                value={datos.email.valor}
-                onChange={(e)=>{validacionEmail(e.target)}}
-                error={datos.email.error}
-                helperText={datos.email.helperText}
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
               />
               <TextField
                 variant="outlined"
                 margin="normal"
                 required
                 fullWidth
-                id="emailValidacion"
+                id="repeatEmail"
                 label="Repita Correo electronico"
-                name="emailValidacion"
-                autoComplete="emailValidacion"
-                autoFocus
-                value={datos.emailValidacion.valor}
-                onBlur={e=>validacionRepetir(e.target)}
-                onChange={(e)=>{validacionEmail(e.target)}}
-                error={datos.emailValidacion.error}
-                helperText={datos.emailValidacion.helperText}
+                name="repeatEmail"
+                autoComplete="repeatEmail"
+                value={formik.values.repeatEmail}
+                onChange={formik.handleChange}
+                error={formik.touched.repeatEmail && Boolean(formik.errors.repeatEmail)}
+                helperText={formik.touched.repeatEmail && formik.errors.repeatEmail}
               />
 
               <TextField
@@ -142,8 +140,12 @@ const Singin = () => {
                 label="Legajo"
                 id="legajo"
                 type='number'
-                min
                 autoComplete="current-password"
+                onBlur={formik.onBlur}
+                value={formik.values.legajo}
+                onChange={formik.handleChange}
+                error={formik.touched.legajo && Boolean(formik.errors.legajo)}
+                helperText={formik.touched.legajo && formik.errors.legajo}
               />
               <TextField
                 variant="outlined"
@@ -155,17 +157,25 @@ const Singin = () => {
                 type="password"
                 id="password"
                 autoComplete="current-password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                error={formik.touched.password && Boolean(formik.errors.password)}
+                helperText={formik.touched.password && formik.errors.password}
               />
               <TextField
                 variant="outlined"
                 margin="normal"
                 required
                 fullWidth
-                name="password2"
+                name="repeatPassword" 
                 label="Repita Contraseña"
                 type="password"
-                id="password2"
+                id="repeatPassword"
                 autoComplete="current-password"
+                value={formik.values.repeatPassword}
+                onChange={formik.handleChange}
+                error={formik.touched.repeatPassword && Boolean(formik.errors.repeatPassword)}
+                helperText={formik.touched.repeatPassword && formik.errors.repeatPassword}
               />
               <Button
                 type="submit"

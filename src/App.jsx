@@ -1,19 +1,24 @@
-import React from 'react'
-import './assets/css/main.css'
-import {ThemeProvider} from '@material-ui/core/styles'
+import React from "react";
+import "./assets/css/main.css";
+import { ThemeProvider } from "@material-ui/core/styles";
 
+import theme from "./assets/css/themaConfig";
 
-import theme from './assets/css/themaConfig'
+//provider
+import { Provider } from "react-redux";
+import generateStore from "./redux/store";
 
-import Singin from './pages/Singin'
-
-
+import Rutas from "./routes/Rutas";
 
 function App() {
+  const store = generateStore();
+
   return (
-    <ThemeProvider theme={theme}>
-    <Singin/>
-    </ThemeProvider>    
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <Rutas />
+      </ThemeProvider>
+    </Provider>
   );
 }
 
