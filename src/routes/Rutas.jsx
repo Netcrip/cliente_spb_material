@@ -1,8 +1,10 @@
 import React from "react";
 import Recuperacion from "../pages/Recuperacion";
-import Login from "../pages/Login";
 
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Layout from '../layout/Layout'
+import Home from '../pages/Home'
+import CargaPresentismo from '../pages/CargaPresentismo'
 
 
 const Rutas = () => {
@@ -10,8 +12,11 @@ const Rutas = () => {
     <>
       <Router>
         <Switch>
-          <Route path="/login">
-            <Login />
+        <Route path="/Presentismo">
+            <Layout  Page={CargaPresentismo}/>
+          </Route>
+          <Route path="/home">
+            <Layout  Page={Home}/>
           </Route>
           <Route path="/:id?/:token?">
             <Recuperacion />

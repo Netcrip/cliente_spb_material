@@ -12,12 +12,28 @@ import Container from "@material-ui/core/Container";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import md5 from "md5";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Slide from "@material-ui/core/Slide";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
-import Dialogo from './Dialogo'
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="down" ref={ref} {...props} />;
+});
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  spiner: {
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(4),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -45,9 +61,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 const Login = () => {
   const classes = useStyles();
+  const [openDialog, setOpenDialog] = useState(false);
 
   const formik = useFormik({
     initialValues: {
@@ -71,15 +87,37 @@ const Login = () => {
       console.log(md5(values.password));
     },
   });
-
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    console.log("entro")
-    setOpen(!open);
+  const handleOpendialog = () => {
+    setOpenDialog(!openDialog);
+    if (!openDialog) {
+      formik2.values.emailRecuperacion = formik.values.email;
+    } else formik.values.email = formik2.values.emailRecuperacion;
   };
 
+  const formik2 = useFormik({
+    initialValues: {
+      emailRecuperacion: "",
+    },
+    validationSchema: yup.object({
+      emailRecuperacion: yup
+        .string("")
+        .required("el Email es requerido")
+        .matches(
+          /^[a-z]+\.+[a-z]+[^@]+@spb.gba.gov.ar\b(?!\s)/,
+          "Ingrese un correo @spb.gba.gov.ar"
+        ),
+    }),
+    onSubmit: (values) => {
+      console.log(values);
 
+      setTimeout(function () {
+        formik2.setSubmitting(false);
+        handleOpendialog();
+      }, 10000);
+
+      return;
+    },
+  });
 
   return (
     <div>
@@ -139,7 +177,12 @@ const Login = () => {
             </Button>
             <Grid container>
               <Grid item xs>
-                <Link href="#" onClick={handleClickOpen} variant="body2" color="inherit">
+                <Link
+                  href="#"
+                  onClick={handleOpendialog}
+                  variant="body2"
+                  color="inherit"
+                >
                   Olvido su contraseña?
                 </Link>
               </Grid>
@@ -151,13 +194,66 @@ const Login = () => {
             </Grid>
           </form>
         </div>
-        </Container>
+      </Container>
       <div className={classes.footer}>
         <Typography variant="overline" align="center" noWrap gutterBottom>
           Create by Emanuel Garcia
         </Typography>
       </div>
-    <Dialogo open={open} handleClickOpen={handleClickOpen}/>
+      <>
+        <Dialog
+          open={openDialog}
+          TransitionComponent={Transition}
+          //onClose={handleOpendialog}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">Recuperar contreseña</DialogTitle>
+
+          {formik2.isSubmitting ? (
+            <DialogContent>
+              <DialogContentText>
+                Se esta enviando el correo de recuperacion
+              </DialogContentText>
+              <div
+                className={classes.spiner}
+              >
+                
+                <CircularProgress color="inherit" thickness="6.0"/>
+              </div>
+            </DialogContent>
+          ) : (
+            <>
+              <DialogContent>
+                <DialogContentText>
+                  Se enviara un correo electronico a la direccion indicada.
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="emailRecuperacion"
+                  label="Direccion de email"
+                  type="email"
+                  fullWidth
+                  value={formik2.values.emailRecuperacion}
+                  onChange={formik2.handleChange}
+                  error={
+                    formik2.touched.emailRecuperacion &&
+                    Boolean(formik2.errors.emailRecuperacion)
+                  }
+                  helperText={
+                    formik2.touched.emailRecuperacion &&
+                    formik2.errors.emailRecuperacion
+                  }
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleOpendialog}>Cancel</Button>
+                <Button onClick={formik2.handleSubmit}>Restaurar</Button>
+              </DialogActions>
+            </>
+          )}
+        </Dialog>
+      </>
     </div>
   );
 };

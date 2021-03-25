@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
-import Main from "../components/Main";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import Footer from "../components/Footer";
+import Main from '../components/Main'
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -12,7 +13,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Layout = () => {
+const Layout = (props) => {
+  const {Page} = props
   const classes = useStyles(); 
   const [open, setOpen] = useState(true);
 
@@ -25,7 +27,7 @@ const Layout = () => {
     <div className={classes.root}>
       <Navbar handleOpenClose={handleOpenClose} open={open} />
       <Sidebar handleOpenClose={handleOpenClose} open={open} />
-      <Main />
+      <Main Page={Page}/>
       <Footer open={open}/>
     </div>
   );

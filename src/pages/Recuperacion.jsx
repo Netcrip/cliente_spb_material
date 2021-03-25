@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -9,10 +9,10 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import ErrorOutline from "@material-ui/icons/ErrorOutline";
-import md5 from 'md5'
-import { useFormik } from 'formik'
-import * as yup from 'yup'
-import { useParams } from 'react-router-dom'
+import md5 from "md5";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import { useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -45,42 +45,38 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Recuperacion = () => {
-    const [tokenValido,setokenValido]=useState(false)
-   
-    const {id,token}=useParams()
-   
-    useEffect(()=>{
-        //setokenValido(true)
-    },[])
+  const [tokenValido, setokenValido] = useState(false);
 
-   
-    
+  const { id, token } = useParams();
+
+  useEffect(() => {
+    //setokenValido(true)
+  }, []);
+
   const classes = useStyles();
 
   const formik = useFormik({
     initialValues: {
       password: "",
-      repeatPassword:"",
-
+      repeatPassword: "",
     },
     validationSchema: yup.object({
-        password: yup
-        .string('')
-        .min(8, 'La contraseña debe tener un mínimo de 8 caracteres.')
-        .required('La contraseña es requerida')
-        .oneOf([yup.ref("repeatPassword")],"Las contraseñas no coinciden"),
-        repeatPassword: yup
-        .string('')
-        .min(8, 'La contraseña debe tener un mínimo de 8 caracteres.')
-        .required('La contraseña es requerida')
-        .oneOf([yup.ref("password")]," "),
+      password: yup
+        .string("")
+        .min(8, "La contraseña debe tener un mínimo de 8 caracteres.")
+        .required("La contraseña es requerida")
+        .oneOf([yup.ref("repeatPassword")], "Las contraseñas no coinciden"),
+      repeatPassword: yup
+        .string("")
+        .min(8, "La contraseña debe tener un mínimo de 8 caracteres.")
+        .required("La contraseña es requerida")
+        .oneOf([yup.ref("password")], " "),
     }),
     onSubmit: (values) => {
-      console.log(md5(values.password))
+      console.log(md5(values.password));
     },
   });
-  
-  
+
   return (
     <div>
       <div>
@@ -92,64 +88,78 @@ const Recuperacion = () => {
             </Avatar>
             <Typography component="h1" variant="h5">
               Cambio de contraseña
-            </Typography> {tokenValido 
-              ? <form className={classes.form} noValidate onSubmit={formik.handleSubmit}>
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Contraseña"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                error={formik.touched.password && Boolean(formik.errors.password)}
-                helperText={formik.touched.password && formik.errors.password}
-              />
-              <TextField
-                variant="outlined"
-                margin="normal"
-                required
-                fullWidth
-                name="repeatPassword" 
-                label="Repita Contraseña"
-                type="password"
-                id="repeatPassword"
-                autoComplete="current-password"
-                value={formik.values.repeatPassword}
-                onChange={formik.handleChange}
-                error={formik.touched.repeatPassword && Boolean(formik.errors.repeatPassword)}
-                helperText={formik.touched.repeatPassword && formik.errors.repeatPassword}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                color="secondary"
-                className={classes.submit}
+            </Typography>{" "}
+            {tokenValido ? (
+              <form
+                className={classes.form}
+                noValidate
+                onSubmit={formik.handleSubmit}
               >
-                Cambiar Contraseña
-              </Button>
-              <Grid container>
-                <Grid item xs></Grid>
-                <Grid item>
-                  <Link href="#" variant="body2" color="inherit">
-                    {"Ya tiene Usuario?"}
-                  </Link>
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="password"
+                  label="Contraseña"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                  helperText={formik.touched.password && formik.errors.password}
+                />
+                <TextField
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="repeatPassword"
+                  label="Repita Contraseña"
+                  type="password"
+                  id="repeatPassword"
+                  autoComplete="current-password"
+                  value={formik.values.repeatPassword}
+                  onChange={formik.handleChange}
+                  error={
+                    formik.touched.repeatPassword &&
+                    Boolean(formik.errors.repeatPassword)
+                  }
+                  helperText={
+                    formik.touched.repeatPassword &&
+                    formik.errors.repeatPassword
+                  }
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="secondary"
+                  className={classes.submit}
+                >
+                  Cambiar Contraseña
+                </Button>
+                <Grid container>
+                  <Grid item xs></Grid>
+                  <Grid item>
+                    <Link href="#" variant="body2" color="inherit">
+                      {"Ya tiene Usuario?"}
+                    </Link>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </form>
-            : <Typography component="h1" variant="h5" color="error" >
-            Token invalido
-          </Typography> 
-           }
-           </div>
+              </form>
+            ) : (
+              <Typography component="h1" variant="h5" color="error">
+                Token invalido
+              </Typography>
+            )}
+          </div>
         </Container>
         <div className={classes.footer}>
-          <Typography variant="overline" align="center"  noWrap gutterBottom>
+          <Typography variant="overline" align="center" noWrap gutterBottom>
             Create by Emanuel Garcia
           </Typography>
         </div>
@@ -158,4 +168,4 @@ const Recuperacion = () => {
   );
 };
 
-export default Recuperacion
+export default Recuperacion;
