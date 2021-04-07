@@ -11,6 +11,7 @@ import Layout from "../layout/Layout";
 import Home from "../pages/Home";
 import CargaPresentismo from "../pages/CargaPresentismo";
 import Page404 from "../pages/Page404";
+import Personal  from '../pages/Personal'
 
 const Rutas = () => {
   return (
@@ -25,6 +26,9 @@ const Rutas = () => {
           </Route>      
           <Route exact  path="/login">
             <Layout Page={Home} />
+          </Route> 
+          <Route exact  path="/personal">
+            <Layout Page={Personal} />
           </Route>    
           <Route exact strict path="/recuperacion/:id?/:token?">
             <Recuperacion />
